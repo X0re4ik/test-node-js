@@ -1,6 +1,5 @@
-const ENV = require('dotenv').config().parsed;
-
-
+const env = require('dotenv').config();
+const ENV = process.env;
 module.exports = {
     ENV
 }

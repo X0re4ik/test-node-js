@@ -11,7 +11,8 @@ const {
  * @param {String} url 
  */
 const connectToMongoose = async (url = mongoDBConfig.url) => {
-    await mongoose.connect(url);
+    console.log(`Connecting to ${url}`);
+    return await mongoose.connect(url);
 }
 
 

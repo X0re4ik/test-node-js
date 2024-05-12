@@ -1,12 +1,11 @@
 const ENV = require('./env').ENV;
 
-
 class MongoDBConfig {
     constructor() {
         this.username = ENV.MONGODB_USERNAME;
         this.password = ENV.MONGODB_PASSWORD;
-        this.hostname = ENV.MONGODB_HOSTNAME || 'localhost';
-        this.port = ENV.MONGODB_PORT || '27017';
+        this.hostname = ENV.MONGODB_HOSTNAME;
+        this.port = ENV.MONGODB_PORT;
         this.name = ENV.MONGODB_NAME;
     }
 

@@ -47,5 +47,8 @@ app.post("/api/generate_wallet", async function(request, response) {
     response.status(200).json(instance.toJSON())
 });
 
-
-app.listen(3000);
+connectToMongoose().then(() => {
+    console.log("Connected to Mongoose");
+    console.log("Server started on port 3000");
+    app.listen(3000)
+    }).catch(err => console.log(err));
