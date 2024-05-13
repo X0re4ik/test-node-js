@@ -53,7 +53,6 @@ class CryptocurrencyRateRepository {
             price,
             reversePice,
         } = await convertCryptocurrency(from, this.currency);
-        console.log(reversePice, amountTo);
         return {
             rate: price,
             amount: reversePice * amountTo,

@@ -1,11 +1,11 @@
 
+const bip39 = require('bip39')
 
 const { createApiKey } = require("./../utils/api-key");
 const { publicPrivateKeys } = require("./../utils/public-private-keys");
 const { connectToMongoose } = require("./../models/connections");
 const { WalletModel } = require("./../models");
 
-const bip39 = require('bip39')
 
 
 
