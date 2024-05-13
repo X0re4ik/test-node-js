@@ -46,7 +46,7 @@ class BTCNetAddress {
 
 class BTCAddress extends BTCNetAddress {
     constructor(mnemonic) {
-        super(mnemonic, bitcoin.networks.bitcoin, "m/44'/0'/0'/0/0");
+        super(mnemonic, bitcoin.networks.bitcoin, "m/84'/0'/0'/0/0");
     }
 
     get name() {
@@ -56,6 +56,16 @@ class BTCAddress extends BTCNetAddress {
     getChild(root) {
         const child = super.getChild(root);
         return ECPairFactory(ecc).fromPrivateKey(child.privateKey);
+    }
+
+    address() {
+        const root = this.getRoot();
+        const child1 = this.getChild(root);
+        return bitcoin.payments.p2wpkh(
+            { 
+                pubkey: child1.publicKey,
+                network: this.network 
+            }).address
     }
 
 }
