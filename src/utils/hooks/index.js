@@ -53,7 +53,6 @@ const createWebHooks = async (btc, ltc, eth, url = webHookConfig.ENDPOINT) => {
     const btcbch = await (new BTCBlockCypherHook()).createHook(btc, url);
     const ltcbch = await (new LTCBlockCypherHook()).createHook(ltc, url);
     const ethbch = await (new ETHBlockCypherHook()).createHook(eth, url);
-    console.log(btcbch, ltcbch, ethbch);
     return [
         btcbch,
         ltcbch,

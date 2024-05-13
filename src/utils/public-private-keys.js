@@ -11,9 +11,7 @@ const EC = require('elliptic').ec;
 const publicPrivateKeys = (token) => {
     const ec = new EC('secp256k1');
     const password = token;
-    //CryptoJS.SHA256(password)
-    
-    const hashedPassword = CryptoJS.HmacSHA512(password, "unique_ip").toString(CryptoJS.enc.Hex);
+    const hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
     const keyPair = ec.keyFromPrivate(hashedPassword);
     return {
         public: keyPair.getPublic("hex"),
