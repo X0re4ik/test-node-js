@@ -1,52 +1,20 @@
 version: '3'
 
 services:
-  mongo:
-    image: mongo
-    restart: always
-    env_file:
-      - ./docker-compose.prod.env
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
-      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
-    ports:
-      - 27017:27017
-      
-  mongo-express:
-    image: mongo-express
-    restart: always
-    env_file:
-      - ./docker-compose.prod.env
-    environment:
-        - ME_CONFIG_MONGODB_SERVER=mongo
-        - ME_CONFIG_MONGODB_PORT=27017
-        - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
-        - ME_CONFIG_MONGODB_AUTH_DATABASE=${MONGOEXPRESS_AUTH_DATABASE}
-        - ME_CONFIG_MONGODB_AUTH_USERNAME=${MONGO_ROOT_USER}
-        - ME_CONFIG_MONGODB_AUTH_PASSWORD=${MONGO_ROOT_PASSWORD}
-        - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
-        - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
-    depends_on:
-        - mongo
-    ports:
-      - 8081:8081
-
   nodejsapp:
     build: .
     restart: always
-    depends_on:
-      - mongo
     ports:
-      - 3000:3000
+      - ${SERVER_PORT}:3000
     env_file:
-      - ./docker-compose.prod.env
+      - ./docker-compose.prod1.env
     environment:
-      - MONGODB_USERNAME=${MONGO_ROOT_USER}
-      - MONGODB_PASSWORD=${MONGO_ROOT_PASSWORD}
-      - MONGODB_HOSTNAME=mongo
-      - MONGODB_NAME=${MONGO_DATABASE}
-      - MONGODB_PORT=27017
-      - SERVER_PORT=3000
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_HOSTNAME=${MONGODB_HOSTNAME}
+      - MONGODB_NAME=${MONGODB_NAME}
+      - MONGODB_PORT=${MONGODB_PORT}
+
       - BLOCKCYPHER_TOKEN=${BLOCKCYPHER_TOKEN}
+
       - WEBHOOK_ENDPOINT=${WEBHOOK_ENDPOINT}

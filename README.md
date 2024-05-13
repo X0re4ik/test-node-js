@@ -1,0 +1,50 @@
+
+# For our friends
+Version of nodejs at least 21
+```
+$ node --version
+v21.7.3
+```
+
+### 1. Set environment variables
+On Ubuntu
+```
+export SERVER_PORT=3000
+export MONGODB_USERNAME=<YOUR_MONGODB_USERNAME>
+export MONGODB_PASSWORD=<YOUR_MONGODB_PASSWORD>
+export MONGODB_HOSTNAME=<YOUR_MONGODB_HOSTNAME>
+export MONGODB_NAME=<YOUR_MONGODB_NAME>
+export MONGODB_PORT=<YOUR_MONGODB_PORT>
+export BLOCKCYPHER_TOKEN=<YOUR_BLOCKCYPHER_TOKEN>
+export WEBHOOK_ENDPOINT=<YOUR_WEBHOOK_ENDPOINT>
+```
+OR 
+Create an .env file in the root of the project  
+```
+# ...
+# src
+#   | ...
+#   | ...    
+#   | app.js    
+# .env
+# Makefile
+# ...
+
+SERVER_PORT=3000
+MONGODB_USERNAME=<YOUR_MONGODB_USERNAME>
+MONGODB_PASSWORD=<YOUR_MONGODB_PASSWORD>
+MONGODB_HOSTNAME=<YOUR_MONGODB_HOSTNAME>
+MONGODB_NAME=<YOUR_MONGODB_NAME>
+MONGODB_PORT=<YOUR_MONGODB_PORT>
+BLOCKCYPHER_TOKEN=<YOUR_BLOCKCYPHER_TOKEN>
+WEBHOOK_ENDPOINT=<YOUR_WEBHOOK_ENDPOINT>
+```
+### 2. Launch the application
+```
+$ npm start
+```
+OR 
+```
+$ node src/app.js 
+```
+
