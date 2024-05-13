@@ -26,18 +26,24 @@ class CryptocurrencyRate {
 
 
 const convertCryptocurrency = async (from, to) => {
-    const response = await axios.get(`https://api.coinbase.com/v2/prices/${from}-${to}/buy`);
-    const data = response.data;
-    if (response.status === 200) {
-        const {
-            amount, base, currency   
-        } = data.data;
+    try {
+        const response = await axios.get(`https://api.coinbase.com/v2/prices/${from}-${to}/buy`);
+        if (response.status === 200) {
+            const data = response.data;
+            const {
+                amount, base, currency   
+            } = data.data;
+            return {
+                price: amount,
+                reversePice: 1 / amount,
+            } 
+        }
+    }
+    catch (e)  {
         return {
-            price: amount,
-            reversePice: 1 / amount,
-            base,
-            currency
-        } 
+            price: 0,
+            reversePice: 0,
+        }
     }
 }
 
@@ -45,7 +51,6 @@ class CryptocurrencyRateRepository {
     constructor(amount, currency) {
         this.amount = amount;
         this.currency = currency;
-        // 
     }
 
     async convert(from, amountTo) {
@@ -60,6 +65,7 @@ class CryptocurrencyRateRepository {
     }
 
     async toJSON() { 
+        
         return {
             local: {
                 amount: this.amount,
