@@ -5,8 +5,8 @@ const bip32 = require('bip32');
 const Wallet = require('ethereumjs-wallet');
 const hdkey = require('ethereumjs-wallet').hdkey;
 const keccak256 = require('js-sha3').keccak256;
-
-
+const ethers = require('ethers');
+const { ECPairFactory } = require("ecpair");
 
 const getSeed = (mnemonic) => {
     return bip39.mnemonicToSeedSync(mnemonic);
@@ -27,9 +27,14 @@ class BTCNetAddress {
         return bip32.BIP32Factory(ecc).fromSeed(this.seed, this.network);
     }
 
+
+    getChild(root) {
+        return root.derivePath(this.path);
+    }
+
     address() {
         const root = this.getRoot();
-        const child1 = root.derivePath(this.path);;
+        const child1 = this.getChild(root);
         return bitcoin.payments.p2pkh(
             { 
                 pubkey: child1.publicKey,
@@ -47,9 +52,15 @@ class BTCAddress extends BTCNetAddress {
     get name() {
         return "BTC";
     }
+
+    getChild(root) {
+        const child = super.getChild(root);
+        return ECPairFactory(ecc).fromPrivateKey(child.privateKey);
+    }
+
 }
 
-class LICAddress extends BTCNetAddress {
+class LTCAddress extends BTCNetAddress {
     constructor(mnemonic) {
         const LITECOIN = {
             messagePrefix: '\x19Litecoin Signed Message:\n',
@@ -62,7 +73,7 @@ class LICAddress extends BTCNetAddress {
             scriptHash: 0x32,
             wif: 0xb0,
         };
-        super(mnemonic, LITECOIN, "m/44'/60'/0'/0/0")
+        super(mnemonic, LITECOIN, "m/44'/2'/0'/0/0")
     }
 
     get name() {
@@ -71,7 +82,7 @@ class LICAddress extends BTCNetAddress {
 }
 
 
-class ETCAddress {
+class ETHAddress {
     constructor(mnemonic) {
         this.mnemonic = mnemonic;
         this.seed = getSeed(this.mnemonic);
@@ -96,10 +107,8 @@ class ETCAddress {
     }
 
     address() {
-        const privateKey = this.generatePrivKey();
-        const publicKey = this.derivePubKey(privateKey);
-        const address = this.deriveEthAddress(publicKey);
-        return address
+        const wallet = ethers.Wallet.fromPhrase(this.mnemonic);
+        return wallet.address
     }
 }
 
@@ -117,13 +126,16 @@ class AddressManager {
         const mnemonic = this.mnemonic;
         return {
             bitcoin: (new BTCAddress(mnemonic)).address(),
-            litecoin: (new LICAddress(mnemonic)).address(),
-            ethereum: (new ETCAddress(mnemonic)).address(),
+            litecoin: (new LTCAddress(mnemonic)).address(),
+            ethereum: (new ETHAddress(mnemonic)).address(),
         }
     }
 }
 
 
 module.exports = {
-    AddressManager
+    AddressManager,
+    ETHAddress,
+    LTCAddress,
+    BTCAddress
 }
