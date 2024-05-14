@@ -7,7 +7,6 @@ const hdkey = require('ethereumjs-wallet').hdkey;
 const keccak256 = require('js-sha3').keccak256;
 const ethers = require('ethers');
 const { ECPairFactory } = require("ecpair");
-
 const getSeed = (mnemonic) => {
     return bip39.mnemonicToSeedSync(mnemonic);
 }
@@ -27,9 +26,9 @@ class BTCNetAddress {
         return bip32.BIP32Factory(ecc).fromSeed(this.seed, this.network);
     }
 
-
     getChild(root) {
-        return root.derivePath(this.path);
+        const child = root.derivePath(this.path);
+        return ECPairFactory(ecc).fromPrivateKey(child.privateKey);
     }
 
     address() {
@@ -45,33 +44,18 @@ class BTCNetAddress {
 
 
 class BTCAddress extends BTCNetAddress {
-    constructor(mnemonic) {
-        super(mnemonic, bitcoin.networks.bitcoin, "m/84'/0'/0'/0/0");
+    constructor(mnemonic, index = 0) {
+        super(mnemonic, bitcoin.networks.bitcoin, `m/44'/0'/0'/0/${index}`);
     }
 
     get name() {
         return "BTC";
     }
 
-    getChild(root) {
-        const child = super.getChild(root);
-        return ECPairFactory(ecc).fromPrivateKey(child.privateKey);
-    }
-
-    address() {
-        const root = this.getRoot();
-        const child1 = this.getChild(root);
-        return bitcoin.payments.p2wpkh(
-            { 
-                pubkey: child1.publicKey,
-                network: this.network 
-            }).address
-    }
-
 }
 
 class LTCAddress extends BTCNetAddress {
-    constructor(mnemonic) {
+    constructor(mnemonic, index = 0) {
         const LITECOIN = {
             messagePrefix: '\x19Litecoin Signed Message:\n',
             bech32: 'ltc',
@@ -83,7 +67,7 @@ class LTCAddress extends BTCNetAddress {
             scriptHash: 0x32,
             wif: 0xb0,
         };
-        super(mnemonic, LITECOIN, "m/44'/2'/0'/0/0")
+        super(mnemonic, LITECOIN, `m/44'/2'/0'/0/${index}`)
     }
 
     get name() {
@@ -93,32 +77,21 @@ class LTCAddress extends BTCNetAddress {
 
 
 class ETHAddress {
-    constructor(mnemonic) {
+    constructor(mnemonic, index = 0) {
         this.mnemonic = mnemonic;
         this.seed = getSeed(this.mnemonic);
+        this.index = index;
     }
 
     get name() {
         return "ETH";
     } 
 
-    generatePrivKey() {
-        return hdkey.fromMasterSeed(this.seed).derivePath(`m/44'/60'/0'/0`).getWallet().getPrivateKey()
-    }
-
-    derivePubKey(privKey){
-        const wallet = Wallet.default.fromPrivateKey(privKey)    
-        return wallet.getPublicKey()
-    }
-
-    deriveEthAddress(pubKey){
-        const address = keccak256(pubKey)
-        return "0x" + address.substring(address.length - 40, address.length)    
-    }
-
-    address() {
-        const wallet = ethers.Wallet.fromPhrase(this.mnemonic);
-        return wallet.address
+    async address() {
+        const mnemonic = ethers.Mnemonic.fromPhrase(this.mnemonic);
+        const path = `m/44'/60'/0'/0/${this.index}`;
+        const wallet = ethers.HDNodeWallet.fromMnemonic(mnemonic, path);
+        return await wallet.getAddress()
     }
 }
 
