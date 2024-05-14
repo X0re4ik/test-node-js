@@ -34,6 +34,9 @@ app.post("/api/generate_invoice", async function(request, response){
         addresses.ethereum
     );
 
+    wm.index += 1;
+    await wm.save()
+
     response.status(200).json({
         addresses,
         pricing,
